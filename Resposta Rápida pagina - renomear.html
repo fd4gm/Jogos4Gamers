@@ -1,0 +1,389 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Resposta Rápida</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Barlow:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: palco 16:9 com cenas em sequência, medidas em cqw para escalar como vídeo; controles de reprodução embaixo. */
+:root{
+  --bg:#090B11;
+  --panel:#111522;
+  --line:#242B42;
+  --fg:#EEF1FA;
+  --muted:#8E97B4;
+  --acc:#FFB224;
+  --p1:#25D2F4;
+  --p2:#FF4FA3;
+  --ok:#3DDC84;
+  --bad:#FF4D4D;
+  --display:'Big Shoulders Display','Arial Narrow',Impact,sans-serif;
+  --body:'Barlow','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);
+  padding-block:20px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:1120px;margin-inline:auto;display:grid;gap:14px}
+
+/* palco */
+.stage{
+  position:relative;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;
+  border:1px solid var(--line);border-radius:10px;
+  background:
+    radial-gradient(60cqw 40cqw at 78% 18%,rgba(255,178,36,.10),transparent 70%),
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/4cqw 4cqw,
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/4cqw 4cqw,
+    var(--bg);
+}
+.scene{position:absolute;inset:0;display:none}
+.scene.on{display:block}
+.stage.paused *{animation-play-state:paused!important}
+.stage.still .a,.stage.still .w,.stage.still .stamp{animation:none}
+
+.hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:2cqw 2.6cqw;font:700 1.45cqw var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);z-index:5}
+.hud b{color:var(--acc);font-weight:700;transition:opacity .3s}
+.stage[data-s="0"] .hud b{opacity:0}
+
+/* animações */
+@keyframes rise{from{opacity:0;transform:translateY(2.2cqw)}}
+@keyframes pop{from{opacity:0;transform:scale(.55)}}
+@keyframes slideL{from{opacity:0;transform:translateX(-5cqw)}}
+@keyframes wIn{from{opacity:0;transform:translateY(.7cqw)}}
+@keyframes ringOut{0%{transform:scale(.92);opacity:.9}100%{transform:scale(2.1);opacity:0}}
+@keyframes press{0%{transform:translateY(0)}35%{transform:translateY(.9cqw) scale(.95)}100%{transform:translateY(0)}}
+@keyframes stamp{from{opacity:0;transform:scale(2.4) rotate(-12deg)}}
+@keyframes flash{0%{opacity:0;transform:scaleX(.6)}12%{opacity:1;transform:scaleX(1)}}
+@keyframes blink{50%{opacity:.2}}
+@keyframes bars{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes lit{from{background:var(--line);color:var(--muted)}}
+@keyframes dim{to{opacity:.35;filter:saturate(.3)}}
+@keyframes wave{0%{transform:translate(-50%,-50%) scale(.4);opacity:.6}100%{transform:translate(-50%,-50%) scale(2.6);opacity:0}}
+.a{animation:rise .7s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:var(--d,0s)}
+.a.pop{animation-name:pop;animation-timing-function:cubic-bezier(.2,1.4,.4,1)}
+.a.sl{animation-name:slideL}
+.w{display:inline-block;animation:wIn .28s ease-out backwards;margin-right:.45em}
+.stamp{animation:stamp .4s cubic-bezier(.2,1.4,.4,1) backwards;animation-delay:var(--d,0s)}
+
+/* botão de mesa */
+.buz{position:relative;width:var(--s,10cqw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 50% 28%,color-mix(in srgb,var(--c) 55%,#fff),var(--c) 52%,color-mix(in srgb,var(--c) 60%,#000));
+  box-shadow:0 .9cqw 0 color-mix(in srgb,var(--c) 38%,#000),0 0 5cqw -1cqw var(--c)}
+.buz i{position:absolute;inset:21%;border-radius:50%;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.55),rgba(255,255,255,.08) 70%);box-shadow:inset 0 -.6cqw 1cqw rgba(0,0,0,.25)}
+.buz .ring{position:absolute;inset:-4%;border-radius:50%;border:.45cqw solid var(--c);opacity:0;pointer-events:none}
+.buz.idle .ring{animation:ringOut 2.2s ease-out infinite}
+.buz.idle .ring+.ring{animation-delay:1.1s}
+.buz.hit{animation:press .55s ease-out backwards;animation-delay:var(--d)}
+.buz.hit .ring{animation:ringOut 1s ease-out backwards;animation-delay:var(--d)}
+
+.pl{position:absolute;display:grid;justify-items:center;gap:.9cqw;transform:translateX(-50%);text-align:center}
+.pl b{font:700 1.7cqw var(--mono);letter-spacing:.14em;color:var(--c)}
+.tag{font:700 1.45cqw var(--mono);letter-spacing:.1em;padding:.35cqw 1cqw;border:.2cqw solid var(--c,var(--muted));color:var(--c,var(--muted));border-radius:.5cqw;white-space:nowrap}
+.p1{--c:var(--p1)} .p2{--c:var(--p2)}
+
+.kick{font:700 1.7cqw var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--acc)}
+.disp{font-family:var(--display);font-weight:900;text-transform:uppercase;line-height:.92;letter-spacing:.005em;text-wrap:balance}
+
+/* S0 abertura */
+.s0 .l{position:absolute;left:6cqw;top:12cqw}
+.s0 h1{margin:1.4cqw 0 0;font-size:11.4cqw}
+.s0 h1 span{display:block}
+.s0 h1 .y{color:var(--acc)}
+.s0 .sub{margin:2.4cqw 0 0;font-size:2.7cqw;font-weight:600;color:var(--muted)}
+.s0 .chip{display:inline-block;margin-top:2.2cqw;font:700 1.8cqw var(--mono);letter-spacing:.12em;padding:.8cqw 1.5cqw;border:.2cqw solid var(--acc);color:var(--acc);border-radius:.6cqw}
+.s0 .bz{position:absolute;right:9cqw;top:14cqw}
+
+/* S1 mesa */
+.cap{position:absolute;left:0;right:0;text-align:center;font-size:3cqw;font-weight:600}
+.cap em{font-style:normal;color:var(--acc)}
+.host{position:absolute;left:50%;top:19cqw;width:16cqw;transform:translateX(-50%)}
+.host .head{width:6.6cqw;height:6.6cqw;border-radius:50%;background:#2C3556;margin:0 auto;position:relative}
+.host .torso{width:14cqw;height:8cqw;border-radius:7cqw 7cqw 0 0;background:#232B47;margin:.6cqw auto 0}
+.host .mic{position:absolute;left:50%;top:7.4cqw;margin-left:2.6cqw;width:.45cqw;height:2.8cqw;background:#6B7597;border-radius:1cqw}
+.host .mic::before{content:"";position:absolute;left:-.55cqw;top:-1cqw;width:1.55cqw;height:1.55cqw;border-radius:50%;background:var(--acc)}
+.host .wv{position:absolute;left:50%;top:9cqw;width:9cqw;aspect-ratio:1;border-radius:50%;border:.3cqw solid var(--acc);animation:wave 2.6s ease-out infinite;opacity:0}
+.host .wv:nth-child(5){animation-delay:.86s}.host .wv:nth-child(6){animation-delay:1.72s}
+.hostlab{position:absolute;left:0;right:0;top:35.2cqw;text-align:center;font:700 1.6cqw var(--mono);letter-spacing:.16em;color:var(--muted)}
+.table{position:absolute;left:5cqw;right:5cqw;top:39cqw;bottom:-6cqw;border-radius:2.4cqw 2.4cqw 0 0;background:linear-gradient(#181D31,#0E1220);border-top:.25cqw solid var(--line)}
+
+/* S2 dicas */
+.card{position:absolute;left:6cqw;top:10cqw;width:24cqw;height:40cqw;border:1px solid var(--line);border-radius:1.2cqw;background:var(--panel);display:grid;align-content:space-between;padding:2.4cqw;justify-items:start}
+.card .q{font-family:var(--display);font-weight:900;font-size:21cqw;line-height:.8;color:var(--acc);align-self:center;justify-self:center;animation:blink 2.4s ease-in-out infinite}
+.card .t{font:700 2.1cqw var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--fg)}
+.eq{display:flex;gap:.5cqw;align-items:flex-end;height:3cqw}
+.eq span{width:.6cqw;height:100%;background:var(--acc);transform-origin:bottom;animation:bars 1s ease-in-out infinite}
+.eq span:nth-child(2){animation-delay:.2s}.eq span:nth-child(3){animation-delay:.4s}.eq span:nth-child(4){animation-delay:.1s}.eq span:nth-child(5){animation-delay:.3s}
+.rows{position:absolute;left:34cqw;right:6cqw;top:10cqw;display:grid;gap:1.6cqw}
+.row{display:flex;gap:1.8cqw;align-items:center;min-height:6.6cqw;padding:1.1cqw 1.8cqw;border:1px solid var(--line);border-radius:1cqw;background:var(--panel)}
+.row p{margin:0;font-size:2.6cqw;font-weight:600;line-height:1.2}
+.bd{flex:none;font:700 1.9cqw var(--mono);padding:.7cqw 1.1cqw;border-radius:.6cqw;background:var(--acc);color:#1b1200;animation:lit .4s backwards;animation-delay:var(--d)}
+
+/* S3 / S4 jogo */
+.clue{position:absolute;left:50%;top:9cqw;width:76cqw;transform:translateX(-50%);padding:2.2cqw 3cqw 2.6cqw;border:1px solid var(--line);border-radius:1.2cqw;background:var(--panel)}
+.clue .kick{display:block;margin-bottom:1.2cqw}
+.clue p{margin:0;font-size:4.2cqw;font-weight:700;line-height:1.15;min-height:1.15em}
+.cut{display:inline-block;color:var(--bad);animation:blink .8s steps(2) infinite;margin-left:.2em}
+.ghost{color:var(--muted);opacity:.45;text-decoration:line-through;text-decoration-thickness:.2cqw}
+.ghost.live{opacity:1;color:var(--fg);text-decoration:none}
+.banner{position:absolute;left:50%;top:26.5cqw;transform:translateX(-50%);white-space:nowrap;font:700 2cqw var(--mono);letter-spacing:.12em;padding:.9cqw 2cqw;border-radius:.6cqw;background:var(--p2);color:#26000F;animation:flash 3s ease-out backwards;animation-delay:var(--d)}
+.bubble{position:absolute;top:32cqw;transform:translateX(-50%);font-size:3cqw;font-weight:700;padding:.9cqw 2cqw;border-radius:1.4cqw;background:var(--fg);color:#0b0d14;white-space:nowrap}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-1.1cqw;margin-left:-1.1cqw;border:1.1cqw solid transparent;border-bottom:0;border-top-color:var(--fg)}
+.mark{position:absolute;top:31cqw;background:rgba(9,11,17,.88);transform:translateX(-50%) rotate(-8deg);font:900 5.4cqw var(--display);text-transform:uppercase;letter-spacing:.04em;padding:0 1.6cqw;border:.5cqw solid currentColor;border-radius:.8cqw;white-space:nowrap}
+.mark.no{color:var(--bad)} .mark.yes{color:var(--ok)}
+.s3 .pl,.s4 .pl{top:39.5cqw}
+.dimmed{animation:dim .5s forwards;animation-delay:var(--d)}
+.dimmed.now{opacity:.35;filter:saturate(.3);animation:none}
+
+/* S5 o jogo */
+.head1{position:absolute;left:6cqw;top:8cqw;font-size:6cqw}
+.head1 em{font-style:normal;color:var(--acc)}
+.cards{position:absolute;left:6cqw;right:6cqw;top:21cqw;display:grid;grid-template-columns:repeat(5,1fr);gap:1.6cqw}
+.ic{min-height:19cqw;padding:1.8cqw;border:1px solid var(--line);border-radius:1.1cqw;background:var(--panel);display:flex;flex-direction:column;justify-content:space-between}
+.ic .n{font:700 1.5cqw var(--mono);letter-spacing:.14em;color:var(--acc)}
+.ic .nm{font-family:var(--display);font-weight:900;font-size:3.7cqw;line-height:.95;text-transform:uppercase}
+.dots{display:flex;gap:.7cqw}
+.dots span{width:1.9cqw;aspect-ratio:1;border-radius:50%;background:var(--acc);animation:pop .3s cubic-bezier(.2,1.4,.4,1) backwards;animation-delay:var(--d)}
+.foot{position:absolute;left:6cqw;top:46cqw;font:700 2.1cqw var(--mono);letter-spacing:.1em;color:var(--muted)}
+.foot b{color:var(--acc)}
+
+/* S6 regras */
+.rules{position:absolute;left:6cqw;right:6cqw;top:19cqw;display:grid;gap:2cqw}
+.rule{display:flex;align-items:center;gap:2.4cqw;padding:1.6cqw 2.4cqw;border:1px solid var(--line);border-radius:1.1cqw;background:var(--panel)}
+.rule .ico{flex:none;width:8cqw;height:8cqw;border-radius:1cqw;background:#1A2036;display:grid;place-items:center}
+.rule p{margin:0;font-size:3.2cqw;font-weight:600;line-height:1.15;text-wrap:balance}
+.rule p b{color:var(--acc);font-weight:700}
+.mini{width:4.6cqw;aspect-ratio:1;border-radius:50%;background:var(--p1);display:grid;place-items:center;box-shadow:0 .4cqw 0 #0f5a6b}
+.mini i{width:50%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.55)}
+.ico svg{width:5cqw;height:5cqw}
+
+/* S7 fim */
+.s7 .big{position:absolute;left:0;right:0;top:11cqw;text-align:center;font-size:13cqw}
+.s7 .big em{font-style:normal;color:var(--acc)}
+.s7 .bz{position:absolute;left:50%;top:33cqw;transform:translateX(-50%)}
+
+/* controles */
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.btn{font:700 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;cursor:pointer}
+.btn:hover{border-color:var(--acc)}
+.btn.main{background:var(--acc);border-color:var(--acc);color:#1b1200}
+.btn:focus-visible,.seg:focus-visible,.bigplay:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.tl{flex:1 1 280px;min-width:0;display:flex;gap:4px}
+.seg{--p:0;position:relative;height:30px;padding:0;border:0;border-radius:3px;background:var(--line);cursor:pointer;overflow:hidden}
+.seg::before{content:"";position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--p));background:var(--acc)}
+.seg span{position:absolute;left:6px;bottom:4px;font:700 10px var(--mono);color:var(--fg);mix-blend-mode:difference}
+.time{font:500 13px var(--mono);color:var(--muted);min-width:90px;text-align:right}
+
+.bigplay{position:absolute;left:50%;bottom:6cqw;transform:translateX(-50%);z-index:6;cursor:pointer;font:700 2.2cqw var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:1.2cqw 2.8cqw;border:0;border-radius:.8cqw;background:var(--acc);color:#1b1200}
+.stage.live .bigplay{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .scene *{animation-duration:.01ms!important}
+  .buz.idle .ring,.card .q,.eq span,.host .wv,.cut{animation:none!important}
+}
+</style>
+
+<div class="wrap">
+  <div class="stage paused still" id="stage" data-s="0">
+    <div class="hud"><b>Resposta Rápida</b><span id="lab">Abertura</span></div>
+
+    <!-- 0 Abertura -->
+    <section class="scene s0 on" id="s0">
+      <div class="l">
+        <div class="kick a" style="--d:.2s">Quiz de hardware · PC gamer</div>
+        <h1 class="disp"><span class="a" style="--d:.45s">Resposta</span><span class="y a" style="--d:.7s">Rápida</span></h1>
+        <p class="sub a" style="--d:1.3s">Quem aperta primeiro, responde primeiro.</p>
+        <span class="chip a" style="--d:1.9s">5 itens × 5 dicas</span>
+      </div>
+      <div class="bz a pop" style="--d:.9s"><div class="buz idle" style="--c:var(--p2);--s:24cqw"><span class="ring"></span><span class="ring"></span><i></i></div></div>
+    </section>
+
+    <!-- 1 A mesa -->
+    <section class="scene s1" id="s1">
+      <div class="cap a" style="--d:.3s;top:7.4cqw">O <em>apresentador</em> lê 5 dicas sobre um item de hardware.</div>
+      <div class="cap a" style="--d:3s;top:11.6cqw">Cada jogador tem um <em>botão</em> na mesa.</div>
+      <div class="table a" style="--d:.1s"></div>
+      <div class="host a pop" style="--d:.8s"><span class="wv"></span><span class="wv"></span><span class="wv"></span><div class="head"></div><div class="torso"></div><div class="mic"></div></div>
+      <div class="hostlab a" style="--d:1.2s">APRESENTADOR</div>
+      <div class="pl p1 a pop" style="--d:3.4s;left:30%;top:42cqw"><div class="buz" style="--c:var(--p1);--s:10cqw"><span class="ring"></span><i></i></div><b>JOGADOR 1</b></div>
+      <div class="pl p2 a pop" style="--d:3.8s;left:70%;top:42cqw"><div class="buz" style="--c:var(--p2);--s:10cqw"><span class="ring"></span><i></i></div><b>JOGADOR 2</b></div>
+    </section>
+
+    <!-- 2 As dicas -->
+    <section class="scene s2" id="s2">
+      <div class="card a sl" style="--d:.1s">
+        <span class="kick">Item 1 de 5</span>
+        <span class="q">?</span>
+        <div><div class="t">Hardware de PC gamer</div><div class="eq" style="margin-top:1.2cqw"><span></span><span></span><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="rows" id="rows"></div>
+    </section>
+
+    <!-- 3 Apertou cedo -->
+    <section class="scene s3" id="s3">
+      <div class="clue a" style="--d:.1s"><span class="kick">Dica 3 de 5</span><p id="c3"></p></div>
+      <div class="banner" style="--d:2.1s">J2 APERTOU ANTES DO FIM DA DICA</div>
+      <div class="bubble a pop" style="--d:3.4s;left:70%">Processador?</div>
+      <div class="mark no stamp" style="--d:4.5s;left:70%">✗ Errou</div>
+      <div class="pl p1" style="left:30%"><div class="buz" style="--c:var(--p1);--s:8.5cqw"><span class="ring"></span><i></i></div><b>JOGADOR 1</b></div>
+      <div class="pl p2" style="left:70%"><div class="buz hit" style="--c:var(--p2);--s:8.5cqw;--d:2s"><span class="ring"></span><i></i></div><b>JOGADOR 2</b><span class="tag a pop" style="--d:4.6s;--c:var(--bad)">ERROU</span></div>
+    </section>
+
+    <!-- 4 Dica completa -->
+    <section class="scene s4" id="s4">
+      <div class="clue a" style="--d:.1s"><span class="kick">Dica 3 de 5 · completa</span><p id="c4"></p></div>
+      <div class="bubble a pop" style="--d:3.9s;left:30%">Placa de vídeo!</div>
+      <div class="pl p1" style="left:30%"><div class="buz hit" style="--c:var(--p1);--s:8.5cqw;--d:3.2s"><span class="ring"></span><i></i></div><b>JOGADOR 1</b><span class="tag a pop" style="--d:.2s">OUVE A DICA COMPLETA</span></div>
+      <div class="pl p2 dimmed" style="left:70%;--d:.3s"><div class="buz" style="--c:var(--p2);--s:8.5cqw"><span class="ring"></span><i></i></div><b>JOGADOR 2</b><span class="tag" style="--c:var(--bad)">ERROU</span></div>
+    </section>
+
+    <!-- 5 O jogo -->
+    <section class="scene s5" id="s5">
+      <div class="head1 disp a" style="--d:.1s">O jogo: <em>5 itens</em></div>
+      <div class="cards" id="cards"></div>
+      <div class="foot a" style="--d:3.6s"><b>5</b> dicas por item · <b>25</b> dicas no total</div>
+    </section>
+
+    <!-- 6 Regras -->
+    <section class="scene s6" id="s6">
+      <div class="head1 disp a" style="--d:.1s;top:7cqw">As <em>regras</em></div>
+      <div class="rules">
+        <div class="rule a sl" style="--d:.7s"><div class="ico"><span class="mini"><i></i></span></div><p><b>Apertou primeiro, responde primeiro.</b></p></div>
+        <div class="rule a sl" style="--d:2.2s"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4FA3" stroke-width="2.2" stroke-linecap="round"><path d="M5 9a8 8 0 0 0 0 6"/><path d="M9 6.5a12 12 0 0 0 0 11"/><path d="M13 4a16 16 0 0 0 0 16"/></svg></div><p>Apertou antes da dica completa e <b>errou?</b> O outro jogador escuta a <b>dica inteira.</b></p></div>
+        <div class="rule a sl" style="--d:3.9s"><div class="ico" id="grid"></div><p><b>5 itens</b>, com <b>5 dicas</b> cada.</p></div>
+      </div>
+    </section>
+
+    <!-- 7 Fim -->
+    <section class="scene s7" id="s7">
+      <div class="big disp a" style="--d:.2s">Dedo no <em>botão.</em></div>
+      <div class="bz a pop" style="--d:1s"><div class="buz idle" style="--c:var(--p2);--s:13cqw"><span class="ring"></span><span class="ring"></span><i></i></div></div>
+    </section>
+
+    <button class="bigplay" id="bigplay" type="button">▶ Reproduzir</button>
+  </div>
+
+  <div class="ctrl">
+    <button class="btn main" id="pp" type="button">Reproduzir</button>
+    <button class="btn" id="rs" type="button">Reiniciar</button>
+    <div class="tl" id="tl"></div>
+    <div class="time" id="time">0:00 / 0:51</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var D=[4200,6500,9800,7000,7000,6500,6500,3800];
+  var L=['Abertura','A mesa','As dicas','Apertou cedo','Dica completa','O jogo','Regras','Fim'];
+  var stage=document.getElementById('stage'),lab=document.getElementById('lab');
+  var scenes=[].slice.call(document.querySelectorAll('.scene'));
+  var starts=[],total=0;D.forEach(function(d){starts.push(total);total+=d;});
+
+  function words(text,start,step){
+    return text.split(' ').map(function(w,i){
+      return '<span class="w" style="animation-delay:'+(start+i*step).toFixed(2)+'s">'+w+'</span>';
+    }).join('');
+  }
+
+  // S2: cinco dicas, lidas uma a uma
+  var CLUES=[
+    'Fico encaixada na placa-mãe, em um slot PCIe.',
+    'Tenho ventoinhas e um dissipador bem grande.',
+    'Cuido de renderizar os gráficos dos jogos.',
+    'Minhas marcas mais famosas são NVIDIA e AMD.',
+    'Minha sigla tem três letras e começa com G.'
+  ];
+  var rows=document.getElementById('rows');
+  CLUES.forEach(function(c,k){
+    var d=0.5+k*1.75;
+    var r=document.createElement('div');
+    r.className='row a';r.style.setProperty('--d',d+'s');
+    r.innerHTML='<span class="bd" style="--d:'+d+'s">'+(k+1)+'/5</span><p>'+words(c,d,0.13)+'</p>';
+    rows.appendChild(r);
+  });
+
+  // S3: dica 3 interrompida
+  document.getElementById('c3').innerHTML=
+    words('Cuido de renderizar',0.5,0.28)+
+    '<span class="cut w" style="animation-delay:1.55s">▮</span>'+
+    '<span class="ghost w" style="animation-delay:2.7s"> os gráficos dos jogos.</span>';
+  // S4: dica 3 completa
+  document.getElementById('c4').innerHTML=words('Cuido de renderizar os gráficos dos jogos.',0.7,0.2);
+
+  // S4: carimbo de acerto sobre a resposta do J1
+  var ok=document.createElement('div');
+  ok.className='mark yes stamp';ok.style.cssText='--d:5.1s;left:30%';ok.textContent='✓ Acertou';
+  document.getElementById('s4').appendChild(ok);
+
+  // S5: cartões de itens
+  var ITEMS=['Placa de vídeo','Processador','SSD NVMe','Memória RAM','Fonte'];
+  var cards=document.getElementById('cards');
+  ITEMS.forEach(function(n,i){
+    var d=0.5+i*0.4;
+    var c=document.createElement('div');c.className='ic a';c.style.setProperty('--d',d+'s');
+    var dots='';for(var j=0;j<5;j++)dots+='<span style="--d:'+(d+0.5+j*0.12).toFixed(2)+'s"></span>';
+    c.innerHTML='<span class="n">ITEM '+(i+1)+'</span><span class="nm">'+n+'</span><div class="dots">'+dots+'</div>';
+    cards.appendChild(c);
+  });
+
+  // S6: ícone 5×5
+  var g='<svg viewBox="0 0 24 24" fill="#FFB224">';
+  for(var y=0;y<5;y++)for(var x=0;x<5;x++)g+='<circle cx="'+(3+x*4.5)+'" cy="'+(3+y*4.5)+'" r="1.5"/>';
+  document.getElementById('grid').innerHTML=g+'</svg>';
+
+  // linha do tempo
+  var tl=document.getElementById('tl'),segs=[];
+  D.forEach(function(d,i){
+    var b=document.createElement('button');b.type='button';b.className='seg';b.style.flex=d+' 1 0';
+    b.setAttribute('aria-label','Ir para a cena: '+L[i]);b.innerHTML='<span>'+(i+1)+'</span>';
+    b.addEventListener('click',function(){seek(i);});
+    tl.appendChild(b);segs.push(b);
+  });
+
+  var t=0,idx=0,playing=false,last=0,started=false;
+  var pp=document.getElementById('pp'),timeEl=document.getElementById('time');
+  function fmt(ms){var s=Math.floor(ms/1000);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+  function show(i){
+    scenes.forEach(function(s){s.classList.remove('on');});
+    void stage.offsetWidth;
+    scenes[i].classList.add('on');idx=i;lab.textContent=L[i];stage.setAttribute('data-s',i);
+  }
+  function update(){
+    segs.forEach(function(s,i){
+      var p=Math.max(0,Math.min(1,(t-starts[i])/D[i]));s.style.setProperty('--p',p);
+    });
+    timeEl.textContent=fmt(t)+' / '+fmt(total);
+  }
+  function label(){pp.textContent=playing?'Pausar':(t>=total?'Repetir':(started?'Continuar':'Reproduzir'));}
+  function setPlay(p){
+    playing=p;stage.classList.toggle('paused',!p);label();
+    if(p){last=performance.now();requestAnimationFrame(loop);}
+  }
+  function begin(){
+    started=true;stage.classList.remove('still');stage.classList.add('live');
+  }
+  function loop(now){
+    if(!playing)return;
+    t+=now-last;last=now;
+    if(t>=total){t=total;update();setPlay(false);return;}
+    var i=0;while(i<D.length-1&&t>=starts[i+1])i++;
+    if(i!==idx)show(i);
+    update();requestAnimationFrame(loop);
+  }
+  function seek(i){begin();t=starts[i];show(i);update();setPlay(true);}
+  function toggle(){
+    if(playing){setPlay(false);return;}
+    if(!started||t>=total){seek(0);return;}
+    setPlay(true);
+  }
+  pp.addEventListener('click',toggle);
+  document.getElementById('bigplay').addEventListener('click',toggle);
+  document.getElementById('rs').addEventListener('click',function(){seek(0);});
+  document.addEventListener('visibilitychange',function(){if(document.hidden&&playing)setPlay(false);});
+  update();label();
+})();
+</script>
+
+</body></html>
