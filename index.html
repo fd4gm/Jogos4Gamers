@@ -1,52 +1,26 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0e17">
-  <meta name="description" content="Central de jogos da 4Gamers.">
-  <title>Jogos 4Gamers</title>
-  <link rel="icon" href="assets/logo-4gamers.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c101b">
+<title>Jogos 4Gamers</title>
+<link rel="icon" href="assets/logo-4gamers.png">
+<link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="header wrap">
-      <div class="logo"><img src="assets/logo-4gamers.png" alt="4Gamers"></div>
-      <div class="brand"><h1>4Gamers</h1><p>Central de jogos</p></div>
-      <div class="status"><span></span><b id="game-count">2 jogos</b></div>
-    </header>
-
-    <main class="wrap">
-      <section class="intro panel" aria-labelledby="page-title">
-        <div>
-          <p class="eyebrow">Área de jogos</p>
-          <h2 id="page-title">Escolha uma partida<br><strong>e bora jogar.</strong></h2>
-          <p class="intro-copy">Acesse os painéis da 4Gamers pelo celular ou computador. Tudo fica salvo no navegador deste aparelho.</p>
-        </div>
-        <div class="intro-mark" aria-hidden="true"><span>4G</span><i></i><i></i></div>
-      </section>
-
-      <div class="section-head"><div><p class="eyebrow">Catálogo</p><h2>Jogos disponíveis</h2></div><p class="subtle">Escolha um card para começar</p></div>
-
-      <section class="game-grid" aria-label="Jogos disponíveis">
-        <article class="game-card response-card">
-          <div class="game-card-head"><span class="game-number">01</span><span class="game-state"><i></i> disponível</span></div>
-          <div class="game-icon response-icon" aria-hidden="true"><span>?</span><b></b><b></b></div>
-          <div class="game-content"><p class="eyebrow">Quiz de hardware</p><h3>Resposta Rápida</h3><p>Leia as dicas, marque seu ponto e controle a partida como apresentador.</p><div class="card-actions"><a class="btn primary" href="games/resposta-rapida/">Abrir jogo <span>→</span></a><a class="btn" href="games/resposta-rapida/manual.html">Manual</a></div></div>
-        </article>
-
-        <article class="game-card x1-card">
-          <div class="game-card-head"><span class="game-number">02</span><span class="game-state"><i></i> disponível</span></div>
-          <div class="game-icon x1-icon" aria-hidden="true"><span>X1</span><b></b><b></b></div>
-          <div class="game-content"><p class="eyebrow">Montador de PCs</p><h3>X1 da Sorte</h3><p>Escolha peças escondidas, monte dois PCs fictícios e defenda sua configuração.</p><div class="card-actions"><a class="btn primary" href="games/x1-da-sorte/">Abrir jogo <span>→</span></a><a class="btn" href="games/x1-da-sorte/manual.html">Manual</a></div></div>
-        </article>
-      </section>
-
-      <aside class="tip panel"><div class="tip-icon">i</div><div><strong>Novos jogos entram aqui</strong><p>Quando você adicionar outro jogo, basta criar um novo card nesta central e apontar para a pasta dele.</p></div></aside>
-    </main>
-    <footer class="footer wrap"><span>4GAMERS</span><span>Jogos para jogar junto.</span></footer>
-  </div>
-  <script src="script.js"></script>
+<div class="wrap">
+<header><img class="logo" src="assets/logo-4gamers.png" alt="4Gamers"><div class="brand"><h1>Central de jogos</h1><p>4Gamers · painéis do apresentador</p></div></header>
+<main>
+<div class="section-head"><h2>Escolha o jogo</h2><span id="game-count">3 jogos</span></div>
+<section class="games" aria-label="Jogos disponíveis">
+<article class="game-card"><div class="game-content"><h3>Resposta Rápida</h3><p>Leitura das dicas, marcação de pausas e controle dos pontos.</p></div><div class="actions"><a class="btn primary" href="games/resposta-rapida/index.html">Abrir jogo →</a><a class="btn" href="games/resposta-rapida/manual.html">Manual</a></div></article>
+<article class="game-card"><div class="game-content"><h3>X1 da Sorte</h3><p>Peças ocultas, escolhas dos jogadores e resumo dos PCs montados.</p></div><div class="actions"><a class="btn primary" href="games/x1-da-sorte/index.html">Abrir jogo →</a><a class="btn" href="games/x1-da-sorte/manual.html">Manual</a></div></article>
+<article class="game-card"><div class="game-content"><h3>Quem Sou Eu?</h3><p>Controle das perguntas, turnos, chances extras e timer de 30 segundos.</p></div><div class="actions"><a class="btn primary" href="games/quem-sou-eu/index.html">Abrir jogo →</a><a class="btn" href="games/quem-sou-eu/index.html#regras">Regras</a></div></article>
+</section>
+</main>
+<footer>O progresso fica salvo no navegador de cada aparelho.</footer>
+</div>
 </body>
 </html>
