@@ -28,6 +28,10 @@ body{
   padding-right:max(16px,env(safe-area-inset-right,0px));
 }
 .wrap{max-width:1120px;margin-inline:auto;display:grid;gap:14px}
+.back-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font:700 12px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.back-nav span{display:flex;gap:8px;align-items:center}
+.back-nav a{color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:10px 14px;background:var(--panel)}
+.back-nav a:hover,.back-nav a:focus-visible{border-color:var(--acc);color:var(--acc)}
 
 /* palco */
 .stage{
@@ -186,6 +190,7 @@ body{
 </style>
 
 <div class="wrap">
+  <nav class="back-nav" aria-label="Navegacao principal"><span>4Gamers Jogos</span><span><a href="manual.html">Manual</a><a href="../../index.html">Voltar para a central</a></span></nav>
   <div class="stage paused still" id="stage" data-s="0">
     <div class="hud"><b>Resposta Rápida</b><span id="lab">Abertura</span></div>
 

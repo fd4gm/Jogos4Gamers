@@ -239,9 +239,15 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition: none !important; }
     }
+    .back-nav { max-width: 1120px; margin: 0 auto 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); font: 700 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .back-nav span { display: flex; gap: 8px; align-items: center; }
+    .back-nav a { color: var(--fg); text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: var(--panel); }
+    .back-nav a:hover, .back-nav a:focus-visible { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 700px) { .back-nav { margin-inline: 16px; } }
   </style>
 </head>
 <body>
+  <nav class="back-nav" aria-label="Navegacao principal"><span>4Gamers Jogos</span><span><a href="manual.html">Manual</a><a href="../../index.html">Voltar para a central</a></span></nav>
   <header class="header wrap">
     <div class="brand">
       <div class="logo" aria-hidden="true">
