@@ -7,7 +7,19 @@ const parts=[
 ['Placa-mãe AM5 X670E','Placa-mãe',1900],['Placa-mãe AM4 B550','Placa-mãe',650],['Fonte 850W 80 Plus Gold','Fonte',700],['Fonte 500W 80 Plus','Fonte',300],['SSD NVMe 2TB','SSD',800],['SSD SATA 480GB','SSD',200],['Water cooler 360mm','Cooler',750],['Air cooler torre','Cooler',230],['Gabinete airflow premium','Gabinete',600],['Gabinete básico','Gabinete',180],['Monitor 27” QHD 165Hz','Monitor',1500],['Placa de captura 4K','Captura',900]
 ].map((p,i)=>({id:'p'+(i+1),name:p[0],category:p[1],value:p[2]}));
 const deep=x=>JSON.parse(JSON.stringify(x)); const fmt=n=>'R$ '+Number(n||0).toLocaleString('pt-BR');
-function makeExample(){let lots=[];for(let r=0;r<3;r++){let a=parts.slice(r*10,r*10+10);lots.push([{type:'Melhor peça',price:2000,items:a.slice(0,3)},{type:'Pior peça',price:1500,items:a.slice(3,6)},{type:'Misterioso',price:2500,items:a.slice(6,10)}])}return {players:['Rodrigo','Marcos'],missions:['Melhor PC para jogar GTA 6','Melhor workstation para modelagem e renderização 3D','Melhor PC para fazer live de jogos AAA'],priority:0,lots,round:0,phase:'setup',money:[10000,10000],scores:[0,0],inventory:[[],[]],assignments:[{},{}],choices:[null,null],purchases:[[],[],[]],finalMoney:null,judge:0,winners:[]}}
+function makeExample(){let byId=id=>parts.find(p=>p.id===id),lot=ids=>ids.map(byId),lots=[[
+  {type:'Melhor peça',price:2000,items:lot(['p2','p13','p20'])},
+  {type:'Pior peça',price:1500,items:lot(['p7','p3','p16'])},
+  {type:'Misterioso',price:2500,items:lot(['p11','p6','p22','p25'])}
+],[
+  {type:'Melhor peça',price:2000,items:lot(['p8','p1','p14'])},
+  {type:'Pior peça',price:1500,items:lot(['p4','p9','p17'])},
+  {type:'Misterioso',price:2500,items:lot(['p12','p5','p19','p28'])}
+],[
+  {type:'Melhor peça',price:2000,items:lot(['p18','p10','p23'])},
+  {type:'Pior peça',price:1500,items:lot(['p24','p26','p29'])},
+  {type:'Misterioso',price:2500,items:lot(['p15','p21','p27','p30'])}
+]];return {players:['Rodrigo','Marcos'],missions:['Melhor PC para jogar GTA 6','Melhor workstation para modelagem e renderização 3D','Melhor PC para fazer live de jogos AAA'],priority:0,lots,round:0,phase:'setup',money:[10000,10000],scores:[0,0],inventory:[[],[]],assignments:[{},{}],choices:[null,null],purchases:[[],[],[]],finalMoney:null,judge:0,winners:[]}}
 let game;try{game=JSON.parse(localStorage.getItem(KEY))||makeExample()}catch{game=makeExample()}let countdown=null, time=10, buildTime=180, defenseTime=45;
 function save(){localStorage.setItem(KEY,JSON.stringify(game));$('saveStatus').textContent='Salvo neste aparelho'} function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function toast(s){let t=$('toast');t.textContent=s;t.hidden=false;clearTimeout(t._x);t._x=setTimeout(()=>t.hidden=true,3100)}
 function categoryHint(lot){if(lot.type==='Misterioso')return 'Nenhuma pista sobre o conteúdo.';let it=lot.type==='Melhor peça'?[...lot.items].sort((a,b)=>b.value-a.value)[0]:[...lot.items].sort((a,b)=>a.value-b.value)[0];return `A ${lot.type.toLowerCase()} é: ${it.category}.`}
