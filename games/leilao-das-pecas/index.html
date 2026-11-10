@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0e17"><meta name="description" content="Painel do apresentador para o Leilão das Peças.">
+  <title>Leilão das Peças • Apresentador</title><link rel="icon" href="../../assets/logo-4gamers.png"><link rel="stylesheet" href="style.css"><script defer src="app.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="header"><a class="brand" href="../../index.html"><img src="../../assets/logo-4gamers.png" alt="4Gamers"><span><strong>Leilão das Peças</strong><small>Painel do apresentador • 4Gamers</small></span></a><div class="save"><i></i><span id="saveStatus">Salvo neste aparelho</span></div></header>
+  <nav class="tabs" aria-label="Áreas do jogo"><button class="tab active" data-view="game">Partida</button><button class="tab" data-view="prepare">Preparar</button><button class="tab" data-view="rules">Regras rápidas</button></nav>
+
+  <main>
+    <section id="gameView">
+      <section class="scorebar panel"><div class="score-player"><span id="name0">Rodrigo</span><strong id="score0">0</strong><small id="money0">R$ 10.000</small></div><div class="phase"><span id="phaseTag">PREPARAÇÃO</span><strong id="phaseTitle">Defina as missões e inicie a partida</strong></div><div class="score-player right"><span id="name1">Marcos</span><strong id="score1">0</strong><small id="money1">R$ 10.000</small></div></section>
+      <div class="rounds" id="roundTabs"></div>
+      <section class="panel mission-strip"><div><p class="eyebrow">MISSÕES DA PARTIDA</p><h2>O que será julgado no fim</h2></div><button class="btn" id="showMissions">Ver missões</button></section>
+      <section id="purchaseArea">
+        <div class="section-title"><div><p class="eyebrow" id="roundLabel">RODADA 1 DE 3</p><h1>Escolha simultânea</h1><p id="roundHelp">Apresente as pistas e inicie os 10 segundos para as escolhas secretas.</p></div><div class="timer"><strong id="timerValue">00:10</strong><button class="btn" id="timerButton">Iniciar</button><button class="icon-btn" id="timerReset" title="Reiniciar cronômetro">↺</button></div></div>
+        <div class="container-grid" id="containers"></div>
+        <section class="panel choice-panel"><div><p class="eyebrow">ESCOLHAS REGISTRADAS</p><h2 id="choiceSummary">Aguardando os dois jogadores</h2><p>Registre somente depois da revelação simultânea. As peças continuam ocultas até concluir as compras.</p></div><div class="choice-actions"><button class="btn" id="passChoice">Registrar passo</button><button class="btn" id="clearChoices">Limpar escolhas</button><button class="btn primary" id="resolveChoices">Resolver escolhas →</button></div></section>
+        <section class="panel auction" id="auctionPanel" hidden></section>
+        <section class="panel result" id="roundResult" hidden></section>
+      </section>
+      <section id="buildArea" hidden>
+        <div class="section-title"><div><p class="eyebrow">MONTAGEM E NEGOCIAÇÃO</p><h1>Distribua as peças</h1><p>Uma peça só pode ir para uma missão. A base de apoio já cobre placa-mãe, fonte, gabinete, cooler e SSD de 500 GB.</p></div><div class="timer"><strong id="buildTimer">03:00</strong><button class="btn primary" id="buildTimerButton">Iniciar</button><button class="icon-btn" id="buildTimerReset">↺</button></div></div>
+        <div class="build-grid" id="inventories"></div>
+        <section class="panel trade"><div><p class="eyebrow">REGISTRAR TROCA OU VENDA</p><h2>Transfira uma peça e, se houver, dinheiro</h2><p>Ambos precisam concordar. A transferência é imediata.</p></div><form id="tradeForm"><select id="tradeFrom"></select><select id="tradePiece"></select><select id="tradeTo"></select><input id="tradeMoney" type="number" min="0" step="100" value="0" aria-label="Valor em dinheiro"><button class="btn primary">Confirmar transferência</button></form></section>
+        <button class="btn primary big" id="lockBuilds">Travar configurações e iniciar julgamento →</button>
+      </section>
+      <section id="judgeArea" hidden>
+        <div class="section-title"><div><p class="eyebrow" id="judgeEyebrow">MISSÃO 1 DE 3</p><h1 id="judgeTitle">Julgamento</h1><p>Compare primeiro se funciona; depois adequação, desempenho e equilíbrio. Se persistir, use o saldo final; se igual, voto do apresentador.</p></div><div class="timer"><strong id="defenseTimer">00:45</strong><button class="btn" id="defenseTimerButton">Defesa</button><button class="icon-btn" id="defenseTimerReset">↺</button></div></div>
+        <div class="build-grid judge" id="judgements"></div>
+        <section class="panel verdict"><h2>Registrar vencedor desta missão</h2><div id="verdictButtons" class="choice-actions"></div><button class="btn primary" id="nextMission" disabled>Próxima missão →</button></section>
+      </section>
+    </section>
+
+    <section id="prepareView" hidden>
+      <div class="section-title"><div><p class="eyebrow">CONTROLE DA PRODUÇÃO</p><h1>Prepare a partida</h1><p>O exemplo usa 30 peças da lista atual, em 9 containers de 3 + 3 + 4 itens.</p></div></div>
+      <section class="panel form-panel"><h2>Jogadores e missões</h2><div class="fields"><label>Jogador 1<input data-bind="players.0"></label><label>Jogador 2<input data-bind="players.1"></label><label>Missão 1<input data-bind="missions.0"></label><label>Missão 2<input data-bind="missions.1"></label><label>Missão 3<input data-bind="missions.2"></label><label>Prioridade do 1º leilão<select data-bind="priority"><option value="0">Jogador 1</option><option value="1">Jogador 2</option></select></label></div><p class="notice">A prioridade de abrir o leilão alterna a cada rodada, com ou sem disputa.</p></section>
+      <section class="panel form-panel"><div class="section-title compact"><div><p class="eyebrow">CONTAINERS</p><h2>Revise ou edite os lotes</h2></div><button class="btn" id="shuffleLots">Embaralhar peças</button></div><div id="lotEditor"></div></section>
+      <section class="panel form-panel"><h2>Dados da partida</h2><div class="choice-actions"><button class="btn" id="exportData">Baixar JSON</button><label class="btn">Importar JSON<input id="importData" type="file" accept="application/json,.json" hidden></label><button class="btn danger" id="resetGame">Nova partida com exemplo</button></div><p class="notice">Importar ou iniciar um novo exemplo apaga o andamento salvo. O JSON é a forma recomendada de trocar peças nos próximos episódios.</p></section>
+    </section>
+
+    <section id="rulesView" hidden>
+      <div class="section-title"><div><p class="eyebrow">COLA DO APRESENTADOR</p><h1>Regras rápidas</h1><p>Respostas objetivas para as dúvidas mais comuns durante o jogo.</p></div><a class="btn" href="../../Manual%20Jogo%20-%20Leil%C3%A3o%20Das%20Pe%C3%A7as.md" target="_blank">Abrir manual completo</a></div>
+      <div class="rules-grid" id="rulesContent"></div>
+    </section>
+  </main>
+</div>
+<dialog id="missionsDialog"><div class="dialog-inner"><div class="dialog-head"><h2>Missões da partida</h2><button class="icon-btn" data-close>×</button></div><ol id="missionList"></ol><p class="notice">A base de apoio é igual para todos e não pontua: placa-mãe compatível, fonte, gabinete, cooler e SSD de 500 GB.</p></div></dialog>
+<dialog id="confirmDialog"><div class="dialog-inner"><h2 id="confirmTitle"></h2><p id="confirmText"></p><div class="choice-actions"><button class="btn" data-close>Cancelar</button><button class="btn primary" id="confirmAction">Confirmar</button></div></div></dialog>
+<div id="toast" hidden></div>
+</body></html>
